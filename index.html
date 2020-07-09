@@ -69,34 +69,23 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">## </span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co">## Attaching package: 'dplyr'</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">## The following objects are masked from 'package:stats':</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">## </span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">##     filter, lag</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">## The following objects are masked from 'package:base':</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">## </span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">##     intersect, setdiff, setequal, union</span></span></code></pre></div>
 <div id="lychee" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#lychee" class="anchor"></a>lychee</h1></div>
-<p>The package <code>lychee</code> helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the <code>fuzzyjoin</code> package, the <code>lychee</code> package does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches.</p>
+<p>The <a href="https://sumtxt.github.io/lychee/">package <code>lychee</code></a> helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the <code>fuzzyjoin</code> package, the <a href="https://sumtxt.github.io/lychee/">package <code>lychee</code></a> does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches.</p>
 <p>The function <code><a href="reference/linkr_joinr.html">linkr()</a></code> stacks two data frames and finds an optimal one-to-one pairing of rows in one data frame with rows in the other data frame. The output is a data frame with as many rows as there are in the two datasets and a common identifier for the pairs. The complementary function is <code><a href="reference/linkr_joinr.html">joinr()</a></code> which, instead of stacking and assigning a common identifier, joins two data frames similar to the <code><a href="https://rdrr.io/r/base/merge.html">base::merge()</a></code> or <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">dplyr::full_join()</a></code> function.</p>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="co"># Install development version from GitHub</span>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># Install development version from GitHub</span>
 <span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"sumtxt/lychee"</span>)</pre></div>
-<p>Read <code><a href="articles/lychee.html">vignette("lychee")</a></code> for more details and to learn how to use this package.</p>
+<p>For more details and to learn how to use this package: <a href="https://sumtxt.github.io/lychee/articles/lychee.html">Getting Started with Lychee</a>.</p>
 </div>
 <div id="usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h3>
 <p>The example belows shows how <code>joinr</code> finds optimal matches within two groups (strata) defined by the variable <code>election</code> in two data frames (<code>elec94</code> and <code>elec09</code>). The first data frame (<code>elec94</code>) shows the strongholds of Germany’s green party in the 1994 Federal election (<code>election=BTW</code>) and the 1994 European election (<code>election=EP</code>). The second data frame shows the same for the 2009 elections.</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="no">elec94</span>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="no">elec94</span>
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;   city                        election greens</span>
 <span class="co">#&gt;   &lt;chr&gt;                       &lt;chr&gt;     &lt;dbl&gt;</span>
@@ -126,7 +115,6 @@
   <span class="kw">caliper</span><span class="kw">=</span><span class="fl">12</span>,
   <span class="kw">method</span><span class="kw">=</span><span class="st">'lcs'</span>,
   <span class="kw">full</span><span class="kw">=</span><span class="fl">TRUE</span>)
-<span class="co">#&gt; Loading required package: stringdist</span>
 <span class="co">#&gt; # A tibble: 8 x 6</span>
 <span class="co">#&gt;   election city94                  greens94 match_dist city09                   greens09</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                      &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                       &lt;dbl&gt;</span>
@@ -140,7 +128,6 @@
 <span class="co">#&gt; 8 EP       &lt;NA&gt;                        NA           NA Lüchow-Dannenberg            29.9</span></pre></div>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
