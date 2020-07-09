@@ -1,0 +1,6 @@
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^install\.R$

@@ -1,0 +1,68 @@
+---
+output:
+  github_document:
+    html_preview: false
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo=FALSE, warnings=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(lychee)
+
+elec94 <- filter(greens3, year==1994) %>% 
+	select(-year,-city_clean)
+
+elec09 <- filter(greens3, year==2009) %>% 
+	select(-year,-city_clean)
+```
+
+
+# lychee
+
+The package `lychee` helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the `fuzzyjoin` package, the `lychee` package does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches. 
+
+The function `linkr()` stacks two data frames and finds an optimal one-to-one pairing of rows in one data frame with rows in the other data frame. The output is a data frame with as many rows as there are in the two datasets and a common identifier for the pairs. The complementary function is `joinr()` which, instead of stacking and assigning a common identifier, joins two data frames similar to the `base::merge()` or `dplyr::full_join()` function. 
+
+
+### Installation
+
+```{r, eval = FALSE}
+# Install development version from GitHub
+remotes::install_github("sumtxt/lychee")
+```
+Read `vignette("lychee")` for more details and to learn how to use this package. 
+
+
+### Usage 
+
+The example belows shows how `joinr` finds optimal matches within two groups (strata) defined by the variable `election` in two data frames (`elec94` and `elec09`). The first data frame (`elec94`) shows the strongholds of Germany's green party in the 1994 Federal election (`election=BTW`) and the 1994 European election (`election=EP`). The second data frame shows the same for the 2009 elections. 
+
+```{r}
+elec94
+
+elec09
+
+joinr(elec94,elec09,
+	strata="election",
+  by="city", 
+  suffix=c("94","09"),
+  add_distance=TRUE, 
+  caliper=12,
+  method='lcs',
+  full=TRUE)
+```
+
+
+
+
+
+
+
+

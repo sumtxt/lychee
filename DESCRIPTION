@@ -1,0 +1,34 @@
+Package: lychee
+Title: Optimal Linking and Joining of Data Frames in R
+Version: 0.1.0
+Author: Moritz Marbach <moritz.marbach@gess.ethz.ch> [aut, cre]
+Maintainer: Moritz Marbach <moritz.marbach@gess.ethz.ch>
+Description: Lychee constructs optimal one-to-one matches between rows that have similar but not identical values for a key variable. The output is either a stacked data frame with a common identifier for all matched pairs or a merged data frame based on the common identifier. 
+License: GPL-3
+Encoding: UTF-8
+BugReports: https://github.com/sumtxt/lychee/issues
+URL: https://github.com/sumtxt/lychee
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Imports:
+	dplyr,
+  tidyr,
+	rlang,
+	vctrs,
+	adagio,
+	igraph,
+	stats
+Depends: 
+    R (>= 2.10)
+Suggests: 
+		ggplot2,
+    stringdist, 
+    geosphere,
+    proxy,
+    knitr,
+    HistData,
+    ggrepel,
+    fuzzyjoin,
+    rmarkdown
+VignetteBuilder: knitr

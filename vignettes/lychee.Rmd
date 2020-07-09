@@ -1,0 +1,254 @@
+---
+title: "Introduction to lychee"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{linkr-usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, message=FALSE}
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggrepel)
+library(fuzzyjoin)
+library(lychee)
+data(greens3)
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(knitr.kable.NA = '')
+```
+
+```{r include = FALSE}
+btw94 <- filter(greens3,
+		year==1994 & 
+		election=="BTW") %>% 
+	select(-year,-election, 
+		-city_clean)
+btw94[2,1] <- "Heidelberg"
+
+btw17 <- filter(greens3,
+		year==2017 & 
+		election=="BTW") %>% 
+	select(-year, -election, 
+		-city_clean)
+
+btw13 <- filter(greens3,
+		year==2013 & 
+		election=="BTW") %>% 
+	select(-year, -election, 
+		-city_clean)
+
+elec94 <- filter(greens3, year==1994) %>% 
+	select(-year,-city_clean)
+
+elec09 <- filter(greens3, year==2009) %>% 
+	select(-year,-city_clean)
+```
+
+This vignettes introduces the `lychee` package and its two core functions: `linkr` and `joinr`. Both of these functions are complementary and are powered by the same code. Both ease linking and joining data frames with key variables that are are similar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the `fuzzyjoin` package, the `lychee` package does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the global difference across all matches. 
+
+
+### Joining data frames  
+
+This vignette relies on a simple dataset to illustrates how `linkr` and `joinr` work. The dataset `greens3` which is part of the package includes for each federal and European election the top three counties where Germany's green party received most votes. In each election, the county name is spelled slightly different - either because the county name changed or because of minor spelling mistakes made during the transcription. The example belows shows the vote shares for the county Freiburg where the Greens received the highest vote share across all 13 elections. Across the 13 observations, there are 5 different spellings for the county. 
+
+```{r}
+greens3 %>% filter(city_clean=="Freiburg")
+```
+We will use `joinr` and `linkr` to link and join observations that belong to the same county. To facilitate comparisons, the data also includes a standardized version of the county name (`name_clean`).
+
+```{r}
+greens3 %>% filter(election=="BTW") %>% 
+	select(-city) %>% spread(year,greens) %>% 
+	kable
+
+greens3 %>% filter(election=="EP") %>% 
+	select(-city) %>% spread(year,greens) %>% 
+	kable
+```
+
+We begin with a simple merge of the observations from the federal election in 1994 and 2017 using the variable `name` as key variable. To focus on the essentials, the data subsetting and variable selection is omitted. 
+
+By default, `joinr` compares the key variable(s) (the county name in the example) in the two data frames using the [optimal string alignment metric](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) and picks the best combination of 1-to-1 matches such that the sum of the distances between matches is minimized. 
+
+```{r}
+btw94
+btw17
+joinr(btw94,btw17,by='city', 
+	suffix=c("94","17"), add_distance=TRUE)
+```
+
+Under the hood, `joinr` takes advantage of the [stringdist](https://cran.r-project.org/web/packages/stringdist/index.html)-package and constructs a distance matrix that takes the following form: 
+
+```{r}
+stringdistmatrix(btw94[['city']], 
+	btw17[['city']])
+```
+
+Each entry in this matrix describes the string distance between a county name in 1994 and a county name in 2017. 
+
+To find one-to-one matches, `joinr` applies a fast version of the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm) to the distance matrix. This algorithm assigns each row of the distance matrix to a column such that the sum of cell values is as small as possible. In the context of the running example, the algorithm finds the best combination of county names from 1994 and 2017 such that the total string distance between them is as small as possible. The solution, as shown above, is a set of three matches with a total string distance of 17 (0+12+5 in the above matrix). 
+
+The algorithm, implemented in the assignment function from the [adagio package](https://cran.r-project.org/web/packages/adagio/index.html) only takes into account the integer part of the distance matrix. The decimal part is ignored. For many string distance metrics this is not relevant as they the distance matrix consists of integers only. A warning is printed if the distance matrix does not consist of integers but real values ("Warning in assignment(m): Matrix 'cmat' not integer; will take floor of it."). In these situations, it might be useful to scale the distance matrix by some constant to increase precision. The scaling parameter can be defined via the parameter parameter `C` which by default is 1. 
+
+The application of the Hungarian algorithm to the distance matrix sets `joinr` apart from `fuzzyjoin`. The function `stringdist_full_join` which is part of the `fuzzyjoin` package also relies on a string distance matrix but any combination with a distance value of less than a cutoff is considered a match. In other words, `fuzzyjoin` does not enforce a one-to-one constraint when constructing matches. While this is an desirable in some situation, it isn't in others. 
+
+In the context of the running example, it is clearly undesirable as we only wish to match each observation once. When using `fuzzyjoin` with the running example (and relying on the package's default cutoff value of `2`), we find that not all observations are correctly matched. When increasing the cutoff value, more matches are formed but Tübingen and Heidelberg in 1994 are matched with Tübingen in 2017 leaving Heidelberg 2017 without a match. 
+
+```{r}
+# Using the fuzzyjoin package instead of lychee here
+stringdist_full_join(btw94,btw17, 
+	method='osa', by='city', max_dist=2)
+
+stringdist_full_join(btw94,btw17, 
+	method='osa', by='city', max_dist=10)
+```
+
+
+### Settings for `joinr`
+
+By default `joinr` uses optimal string alignment as a distance metric but other distance metrics can be used. Changes in the metric can go a long way when `joinr` produces suboptimal matches as the next example with the election outcomes from 2013 and 2017 illustrates. 
+
+```{r}
+btw13
+btw17
+joinr(btw13,btw17,by=c("city"), 
+	suffix=c("94","17"),
+	add_distance=TRUE)
+```
+The default settings lead to a suboptimal join. A change to the longest common substring distance improves the result. Users may use any string distance metric that is part of the `stringdist` package.
+
+```{r}
+joinr(btw13,btw17,by=c("city"), 
+	suffix=c("94","17"),
+	add_distance=TRUE, 
+	method='lcs')
+```
+
+The result is still suboptimal as it matches the city of Darmstadt with the city of Tübingen. This is because by default, `joinr` matches every row in a (shorter) data frame with a row in a (longer) data frame. This behavior is useful when one data frame is known to be a subset of the other. If that is not the case and there is only a partial overlap, the `caliper` parameter is useful. It regulates up to which distance two rows are considered a match. Reducing the caliper value reduces the number of matches. Some iterative trial and error is necessary to choose a sensible value. The parameter `full` regulates if unmatched rows from the shorter data frame should be appended to the output (`full=TRUE`, the default) or dropped (`full=FALSE`). 
+
+Applying the caliper value to the example above leads to a perfect result. 
+
+```{r}
+joinr(btw13,btw17,by=c("city"), 
+	suffix=c("94","17"),
+	add_distance=TRUE, 
+	method='lcs',
+	caliper=12, full=TRUE)
+```
+
+In many situations it might be useful to perform the above operations within certain groups. Consider the task of matching the vote shares for 1994 and 2009 in both the federal elections (`election='BTW'`) and the European parliament elections (`election='EP'`). Without constraining the matching to proceed within the two groups, we might end up with matches that merge observations from the federal and the European parliament elections as the example demonstrates. 
+
+```{r}
+elec94
+elec09
+joinr(elec94,elec09,
+	by=c("city"), 
+	suffix=c("94","09"),
+	add_distance=TRUE, 
+	caliper=12,
+	method='lcs',full=TRUE)
+```
+
+Fortunately, `joinr` allows to join observations only within groups using the parameter `strata`. In principle, strata can be defined by a series of variables, where each combination of values defines a strata. 
+
+```{r}
+joinr(elec94,elec09,by=c("city"), 
+	strata='election',
+	suffix=c("94","09"),
+	add_distance=TRUE, 
+	caliper=12, full=TRUE,
+	method='lcs')
+```
+
+
+### Linking one and many observations  
+
+While `joinr` joins data frames, `linkr` assigns a common identifier to matching observations. Going back to the first example with the election outcomes from 1994 and 2017, we assign a common identifier to the stacked data frame instead of merging columns of one data frame with the columns in another. 
+
+```{r}
+linkr(btw94,btw17,by=c("city"), 
+	add_distance=TRUE, 
+	caliper=12, 
+	method='lcs') %>% 
+arrange(match_id)
+```
+
+In all of the above examples, we used `joinr` and `linkr` to constructed one-to-one matches between two data frames. But in some situations we might wish to construct a chain of matches. For example, we might wish to assign a common identifier to all observations of the same county across six federal elections. 
+
+To facilitate such linkage, the package provides the function `linkr_multi` which constructs matches iteratively. The first two data frames are matched as with `linkr`. The function then selects one observation per matched pair (and all singletons) and matches those with the third data frame. Selecting again one observation per matched tuple, the function matches those with the fourth data frame and so forth. By default, the last observation per matched pair is used (this can be changed).
+
+The output below illustrates the application to the running example. For an optimal result, it is necessary to select a slightly higher caliper value then before. 
+
+```{r}
+linkr_multi(
+		df=filter(greens3, election=="BTW"), 
+		by='city', 
+		slice='year',
+		method='lcs',
+		caliper=15) %>% 
+arrange(match_id,year) %>% 
+	data.frame
+```
+In this examples there are lots of matches to discover which makes it an easy case for `linkr_multi`. When there are fewer (true) matches, the false positive rate typically goes up and even after playing around with the caliper, the linking is imperfect as the next example with the subset of observations from the European elections demonstrates. In the example below the caliper was selected to have zero false positives which leaves two observations from Heidelberg and Freiburg unlinked. 
+
+```{r}
+linkr_multi(
+		df=filter(greens3, election=="EP"), 
+		by='city', 
+		slice='year',
+		method='lcs',
+		caliper=9) %>% 
+select(-city_clean) %>% 
+arrange(match_id,year) %>% 
+	data.frame
+```
+
+### Using Geographic Distances 
+
+All previous examples use the city name to link and join data frames. The next example is one where we use geographic coordinates as key variables. That said, in principle users can also define their own distance function and use that within `joinr` or `linkr`. 
+
+To illustrate how to use geographic distance functions, we use the `OldMaps` data from the package [`HistData`](https://cran.r-project.org/web/packages/HistData/index.html) which includes the latitudes and longitudes of 39 places on 11 old maps drawn between 1688 and 1818 as well as the actual geographic coordinates. 
+
+In the example below we check how well we can link the actual coordinates with that from the youngest map of 1818. The plot below shows the actual coordinates as well as those from the drawn map plus the links as constructed using `linkr`. In total, `linkr` is able to link 35 out of 39 points correctly. The accuracy declines for older maps as one might expect (not shown).
+
+```{r, fig.width = 6}
+library(HistData)
+data(OldMaps)
+
+OldMaps <- OldMaps %>% 
+	mutate(lat=abs(lat),
+			long=abs(long))
+
+m1818 <- filter(OldMaps, name=="Melish") 
+mtruth <- filter(OldMaps, name=="Actual") 
+
+linkr(mtruth,m1818,
+		by=c("long","lat"), 
+		method='haversine', 
+		add_distance=TRUE) %>% 
+	ggplot(aes(abs(long),abs(lat), 
+			group=match_id, color=name)) + 
+		geom_point() + geom_line()
+
+out <- joinr(mtruth,m1818,
+		by=c("long","lat"), 
+		method='haversine', 
+		add_distance=TRUE) 
+
+with(out, table(point.y==point.x))
+```
+
+
+
+### When not to use the package
+
+The package is written to ease linking and joining data frames based on 1-2 key variables that uniquely identify observations in the input datasets (possibly within strata). In situation where linking should be based on comparing and weighting the similarity of a number of variables, other packages such as as [fastLink](https://cran.r-project.org/web/packages/fastLink/index.html) might be superior.

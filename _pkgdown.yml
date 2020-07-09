@@ -1,0 +1,16 @@
+home:
+  title: Lychee - Optimal Linking and Joining of Data Frames in R
+
+authors:
+  Moritz Marbach: 
+    href: "http://moritz-marbach.com/"
+
+reference:
+- title: "Functions"
+- contents: 
+    - joinr 
+    - linkr
+    - linkr_multi
+- title: "Data"
+- contents: 
+    - greens3
