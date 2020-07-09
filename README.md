@@ -3,12 +3,12 @@
 
 # lychee
 
-The [package `lychee`](https://sumtxt.github.io/lychee/) helps to link
+The package [`lychee`](https://sumtxt.github.io/lychee/) helps to link
 and join data frames with key variables that are are similiar but not
 identical (e.g., a variable with geographic names spelled slightly
 different or nearby geographic coordinates). Different from the
-`fuzzyjoin` package, the [package
-`lychee`](https://sumtxt.github.io/lychee/) does not output all matches
+`fuzzyjoin` package, the package
+[`lychee`](https://sumtxt.github.io/lychee/) does not output all matches
 given some definition of sufficient similarity, but constructs optimal
 one-to-one matches minimizing the total difference across all matches.
 
@@ -28,7 +28,7 @@ remotes::install_github("sumtxt/lychee")
 ```
 
 For more details and to learn how to use this package: [Getting Started
-with Lychee](https://sumtxt.github.io/lychee/articles/lychee.html).
+with lychee](https://sumtxt.github.io/lychee/articles/lychee.html).
 
 ### Usage
 
