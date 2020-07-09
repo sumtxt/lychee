@@ -6,7 +6,7 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, echo=FALSE, warnings=FALSE}
+```{r, echo=FALSE, messages=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -26,7 +26,7 @@ elec09 <- filter(greens3, year==2009) %>%
 
 # lychee
 
-The package `lychee` helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the `fuzzyjoin` package, the `lychee` package does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches. 
+The [package `lychee`](https://sumtxt.github.io/lychee/) helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the `fuzzyjoin` package, the [package `lychee`](https://sumtxt.github.io/lychee/) does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches. 
 
 The function `linkr()` stacks two data frames and finds an optimal one-to-one pairing of rows in one data frame with rows in the other data frame. The output is a data frame with as many rows as there are in the two datasets and a common identifier for the pairs. The complementary function is `joinr()` which, instead of stacking and assigning a common identifier, joins two data frames similar to the `base::merge()` or `dplyr::full_join()` function. 
 
@@ -37,7 +37,7 @@ The function `linkr()` stacks two data frames and finds an optimal one-to-one pa
 # Install development version from GitHub
 remotes::install_github("sumtxt/lychee")
 ```
-Read `vignette("lychee")` for more details and to learn how to use this package. 
+For more details and to learn how to use this package: [Getting Started with Lychee](https://sumtxt.github.io/lychee/articles/lychee.html).
 
 
 ### Usage 

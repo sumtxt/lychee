@@ -1,26 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
 # lychee
 
-The package `lychee` helps to link and join data frames with key
-variables that are are similiar but not identical (e.g., a variable with
-geographic names spelled slightly different or nearby geographic
-coordinates). Different from the `fuzzyjoin` package, the `lychee`
-package does not output all matches given some definition of sufficient
-similarity, but constructs optimal one-to-one matches minimizing the
-total difference across all matches.
+The [package `lychee`](https://sumtxt.github.io/lychee/) helps to link
+and join data frames with key variables that are are similiar but not
+identical (e.g., a variable with geographic names spelled slightly
+different or nearby geographic coordinates). Different from the
+`fuzzyjoin` package, the [package
+`lychee`](https://sumtxt.github.io/lychee/) does not output all matches
+given some definition of sufficient similarity, but constructs optimal
+one-to-one matches minimizing the total difference across all matches.
 
 The function `linkr()` stacks two data frames and finds an optimal
 one-to-one pairing of rows in one data frame with rows in the other data
@@ -37,8 +27,8 @@ identifier, joins two data frames similar to the `base::merge()` or
 remotes::install_github("sumtxt/lychee")
 ```
 
-Read `vignette("lychee")` for more details and to learn how to use this
-package.
+For more details and to learn how to use this package: [Getting Started
+with Lychee](https://sumtxt.github.io/lychee/articles/lychee.html).
 
 ### Usage
 
@@ -80,7 +70,6 @@ joinr(elec94,elec09,
   caliper=12,
   method='lcs',
   full=TRUE)
-#> Loading required package: stringdist
 #> # A tibble: 8 x 6
 #>   election city94                  greens94 match_dist city09                   greens09
 #>   <chr>    <chr>                      <dbl>      <dbl> <chr>                       <dbl>
