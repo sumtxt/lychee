@@ -34,10 +34,12 @@ with lychee](https://sumtxt.github.io/lychee/articles/lychee.html).
 
 The example belows shows how `joinr` finds optimal matches in two data
 frames (`elec94` and `elec09`) within two groups (strata). The first
-data frame (`elec94`) shows the strongholds of Germany’s green party in
+data frame (`elec94`) lists the strongholds of Germany’s green party in
 the 1994 Federal election (`election=BTW`) and the 1994 European
-election (`election=EP`). The second data frame shows the same for the
-2009 elections.
+election (`election=EP`). The second data frame lists such strongholds
+for the 2009 elections. While the names of the cities are spelled
+slightly different in the two data frames, `joinr` merges the two tables
+correctly.
 
 ``` r
 elec94
