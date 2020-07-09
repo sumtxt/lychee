@@ -72,19 +72,19 @@
 <div id="lychee" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#lychee" class="anchor"></a>lychee</h1></div>
-<p>The <a href="https://sumtxt.github.io/lychee/">package <code>lychee</code></a> helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the <code>fuzzyjoin</code> package, the <a href="https://sumtxt.github.io/lychee/">package <code>lychee</code></a> does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches.</p>
+<p>The package <a href="https://sumtxt.github.io/lychee/"><code>lychee</code></a> helps to link and join data frames with key variables that are are similiar but not identical (e.g., a variable with geographic names spelled slightly different or nearby geographic coordinates). Different from the <code>fuzzyjoin</code> package, the package <a href="https://sumtxt.github.io/lychee/"><code>lychee</code></a> does not output all matches given some definition of sufficient similarity, but constructs optimal one-to-one matches minimizing the total difference across all matches.</p>
 <p>The function <code><a href="reference/linkr_joinr.html">linkr()</a></code> stacks two data frames and finds an optimal one-to-one pairing of rows in one data frame with rows in the other data frame. The output is a data frame with as many rows as there are in the two datasets and a common identifier for the pairs. The complementary function is <code><a href="reference/linkr_joinr.html">joinr()</a></code> which, instead of stacking and assigning a common identifier, joins two data frames similar to the <code><a href="https://rdrr.io/r/base/merge.html">base::merge()</a></code> or <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">dplyr::full_join()</a></code> function.</p>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
 <div class="sourceCode" id="cb1"><pre class="r"><span class="co"># Install development version from GitHub</span>
 <span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"sumtxt/lychee"</span>)</pre></div>
-<p>For more details and to learn how to use this package: <a href="https://sumtxt.github.io/lychee/articles/lychee.html">Getting Started with Lychee</a>.</p>
+<p>For more details and to learn how to use this package: <a href="https://sumtxt.github.io/lychee/articles/lychee.html">Getting Started with lychee</a>.</p>
 </div>
 <div id="usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h3>
-<p>The example belows shows how <code>joinr</code> finds optimal matches within two groups (strata) defined by the variable <code>election</code> in two data frames (<code>elec94</code> and <code>elec09</code>). The first data frame (<code>elec94</code>) shows the strongholds of Germany’s green party in the 1994 Federal election (<code>election=BTW</code>) and the 1994 European election (<code>election=EP</code>). The second data frame shows the same for the 2009 elections.</p>
+<p>The example belows shows how <code>joinr</code> finds optimal matches in two data frames (<code>elec94</code> and <code>elec09</code>) within two groups (strata). The first data frame (<code>elec94</code>) lists the strongholds of Germany’s green party in the 1994 Federal election (<code>election=BTW</code>) and the 1994 European election (<code>election=EP</code>). The second data frame lists such strongholds for the 2009 elections. While the names of the cities are spelled slightly different in the two data frames, <code>joinr</code> merges the two tables correctly.</p>
 <div class="sourceCode" id="cb2"><pre class="r"><span class="no">elec94</span>
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;   city                        election greens</span>
